@@ -3,23 +3,36 @@
 import java.awt.Graphics;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
+import java.util.Date;
 
 import javax.imageio.ImageIO;
 
 public class Landscape {
-
+	
+	Date dt = new Date();
 	private BufferedImage land;
 	private int distance;
-	int where;
+	int where, hour;
 
 	public Landscape(int distance) {
+		hour = dt.getHours();
 		try {
+			if (18 > hour && hour > 7){
 			land = ImageIO
 					.read(getClass().getResourceAsStream("/land.png"));
+			}
+			else if (20 >= hour && hour >= 18){
+				land = ImageIO
+						.read(getClass().getResourceAsStream("/landAfternoon.png"));
+				}
+			else if (7 >= hour || hour > 20){
+				land = ImageIO
+						.read(getClass().getResourceAsStream("/landNight.png"));
+				}
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-
+		
 		this.distance = distance;
 	}
 

@@ -29,7 +29,7 @@ public class Game extends JFrame implements KeyListener {
 		this.setResizable(false);
 
 		length = rand.nextInt(6 * 800) + 3 * 800;
-		plane = new Plane();
+		plane = new Plane(length);
 		runway = new Runway(length);
 		scene = new Scene(length);
 		land = new Landscape(length);
@@ -60,6 +60,8 @@ public class Game extends JFrame implements KeyListener {
 			drawWin(g);
 		else if (plane.isDead())
 			drawGameOver(g, "Game Over!");
+		else if (plane.tooFar())
+			drawGameOver(g, "You Missed the Runway!");
 		else if (plane.collidedWith(scene)) {
 			plane.drawExploded(g);
 			drawGameOver(g, "You Crashed!");
@@ -70,7 +72,7 @@ public class Game extends JFrame implements KeyListener {
 	public void drawGameOver(Graphics g, String message) {
 		g.setFont(new Font("TimesRoman", Font.PLAIN, 40));
 		g.setColor(Color.BLACK);
-		g.drawString(message, this.getWidth() / 2 - 40, 100);
+		g.drawString(message, this.getWidth() / 2 - message.length()*10, 100);
 	}
 
 	public void drawWin(Graphics g) {

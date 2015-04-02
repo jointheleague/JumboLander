@@ -25,7 +25,11 @@ public class Landscape {
 				land = ImageIO
 						.read(getClass().getResourceAsStream("/landAfternoon.png"));
 				}
-			else if (7 >= hour || hour > 20){
+			else if (7 >= hour && hour >= 5){
+				land = ImageIO
+						.read(getClass().getResourceAsStream("/landMorning.png"));
+				}
+			else if (4 >= hour || hour > 20){
 				land = ImageIO
 						.read(getClass().getResourceAsStream("/landNight.png"));
 				}

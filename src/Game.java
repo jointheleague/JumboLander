@@ -23,7 +23,7 @@ public class Game extends JFrame implements KeyListener {
 	int fps = 40;
 	boolean isInControl = true;
 
-	public Game() {
+	public Game(boolean allowSound) {
 		this.setTitle("Jumbo Lander");
 		this.setSize(800, 400);
 		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -36,7 +36,8 @@ public class Game extends JFrame implements KeyListener {
 		runway = new Runway(length);
 		scene = new Scene(length);
 		land = new Landscape(length);
-		s = new Sound();
+		s = new Sound(allowSound);
+
 		s.playOnLoop(s.radioChatter);
 		s.playOnLoop(s.engine);
 	}
@@ -54,7 +55,7 @@ public class Game extends JFrame implements KeyListener {
 		}
 		g.clearRect(0, 0, this.getWidth(), this.getHeight());
 
-		if (rand.nextInt(fps * 2) == 1)
+		if (rand.nextInt(fps) == 1)
 			s.play(s.bingBong);
 
 		land.draw(g);
@@ -67,19 +68,18 @@ public class Game extends JFrame implements KeyListener {
 			drawWin(g);
 			s.stopAmbient();
 			s.play(s.victory);
-		} else if (plane.isDead() && isInControl) {
-			drawGameOver(g, "Game Over!");
-			s.stopAmbient();
 		} else if (plane.tooFar() && isInControl) {
 			drawGameOver(g, "You Missed the Runway!");
 			s.stopAmbient();
 			s.play(s.boo);
-		} else if ((plane.collidedWith(scene) && isInControl) || !isInControl) {
-			if (isInControl)
+		} else if ((plane.isDead() || plane.collidedWith(scene) && isInControl)
+				|| !isInControl) {
+			if (isInControl) {
 				s.play(s.explosion);
+				s.stopAmbient();
+			}
 			plane.drawExploded(g);
 			drawGameOver(g, "You Crashed!");
-			s.stopAmbient();
 			isInControl = false;
 			plane.setThrottle(false);
 			if (plane.getAltitude() <= 400)
@@ -106,7 +106,6 @@ public class Game extends JFrame implements KeyListener {
 				plane.setThrottle(true);
 		} else if (ke.getKeyCode() == KeyEvent.VK_M) {
 			this.dispose();
-			new JumboLanderMain();
 		}
 	}
 

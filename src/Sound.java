@@ -4,7 +4,7 @@ import javax.sound.sampled.Clip;
 
 public class Sound {
 
-	public Clip explosion, victory, engine, bingBong, radioChatter;
+	public Clip explosion, victory, engine, bingBong, radioChatter, boo;
 
 	public Sound() {
 		try {
@@ -23,6 +23,9 @@ public class Sound {
 			victory = AudioSystem.getClip();
 			victory.open(AudioSystem.getAudioInputStream(this.getClass()
 					.getResource("victory.wav")));
+			boo = AudioSystem.getClip();
+			boo.open(AudioSystem.getAudioInputStream(this.getClass()
+					.getResource("boo.wav")));
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

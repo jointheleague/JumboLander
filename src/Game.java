@@ -73,6 +73,7 @@ public class Game extends JFrame implements KeyListener {
 		} else if (plane.tooFar() && isInControl) {
 			drawGameOver(g, "You Missed the Runway!");
 			s.stopAmbient();
+			s.play(s.boo);
 		} else if ((plane.collidedWith(scene) && isInControl) || !isInControl) {
 			if (isInControl)
 				s.play(s.explosion);

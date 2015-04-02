@@ -23,7 +23,7 @@ public class Plane {
 	}
 
 	public boolean isDead() {
-		if (altitude > -20F && altitude < 400)
+		if (altitude > -20 && altitude < 400)
 			return false;
 		return true;
 	}
@@ -72,5 +72,13 @@ public class Plane {
 		if (distance < -800)
 			return true;
 		return false;
+	}
+
+	public int getAltitude() {
+		return altitude;
+	}
+
+	public void setAltitude(int altitude) {
+		this.altitude = altitude;
 	}
 }

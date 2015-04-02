@@ -16,9 +16,12 @@ public class Game extends JFrame implements KeyListener {
 	Runway runway;
 	Scene scene;
 	Landscape land;
-	long timer;
-	int length, paints;
+	Sound s;
+
+	long timer = System.currentTimeMillis();
+	int length;
 	int fps = 40;
+	boolean isInControl = true;
 
 	public Game() {
 		this.setTitle("Jumbo Lander");
@@ -33,22 +36,26 @@ public class Game extends JFrame implements KeyListener {
 		runway = new Runway(length);
 		scene = new Scene(length);
 		land = new Landscape(length);
+		s = new Sound();
+		s.playOnLoop(s.radioChatter);
+		s.playOnLoop(s.engine);
 	}
 
 	public void paint(Graphics g) {
-		paints++;
 		try {
 			long sleep = timer + 1000 / fps - System.currentTimeMillis();
 			if (sleep > 0)
 				Thread.sleep(sleep);
-			else if (paints != 1)
+			else
 				System.out.println("Computer can't keep up with " + fps
 						+ " fps!");
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		g.setColor(Color.CYAN);
 		g.clearRect(0, 0, this.getWidth(), this.getHeight());
+
+		if (rand.nextInt(fps * 2) == 1)
+			s.play(s.bingBong);
 
 		land.draw(g);
 		runway.draw(g);
@@ -56,40 +63,56 @@ public class Game extends JFrame implements KeyListener {
 		scene.draw(g);
 
 		timer = System.currentTimeMillis();
-		if (plane.isOnRunway(runway))
+		if (plane.isOnRunway(runway) && isInControl) {
 			drawWin(g);
-		else if (plane.isDead())
+			s.stopAmbient();
+			s.play(s.victory);
+		} else if (plane.isDead() && isInControl) {
 			drawGameOver(g, "Game Over!");
-		else if (plane.tooFar())
+			s.stopAmbient();
+		} else if (plane.tooFar() && isInControl) {
 			drawGameOver(g, "You Missed the Runway!");
-		else if (plane.collidedWith(scene)) {
+			s.stopAmbient();
+		} else if ((plane.collidedWith(scene) && isInControl) || !isInControl) {
+			if (isInControl)
+				s.play(s.explosion);
 			plane.drawExploded(g);
 			drawGameOver(g, "You Crashed!");
+			s.stopAmbient();
+			isInControl = false;
+			plane.setThrottle(false);
+			if (plane.getAltitude() <= 400)
+				repaint();
 		} else
 			repaint();
 	}
 
 	public void drawGameOver(Graphics g, String message) {
-		g.setFont(new Font("TimesRoman", Font.PLAIN, 40));
+		g.setFont(new Font(g.getFont().getFontName(), Font.PLAIN, 40));
 		g.setColor(Color.BLACK);
-		g.drawString(message, this.getWidth() / 2 - message.length()*10, 100);
+		g.drawString(message, this.getWidth() / 2 - message.length() * 10, 100);
 	}
 
 	public void drawWin(Graphics g) {
-		g.setFont(new Font("TimesRoman", Font.PLAIN, 40));
+		g.setFont(new Font(g.getFont().getFontName(), Font.PLAIN, 40));
 		g.setColor(Color.BLACK);
 		g.drawString("You Win!", this.getWidth() / 2, 100);
 	}
 
 	public void keyPressed(KeyEvent ke) {
 		if (ke.getKeyCode() == KeyEvent.VK_SPACE) {
-			plane.setThrottle(true);
+			if (isInControl)
+				plane.setThrottle(true);
+		} else if (ke.getKeyCode() == KeyEvent.VK_M) {
+			this.dispose();
+			new JumboLanderMain();
 		}
 	}
 
 	public void keyReleased(KeyEvent ke) {
 		if (ke.getKeyCode() == KeyEvent.VK_SPACE) {
-			plane.setThrottle(false);
+			if (isInControl)
+				plane.setThrottle(false);
 		}
 	}
 

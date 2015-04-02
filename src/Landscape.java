@@ -44,7 +44,7 @@ public class Landscape {
 	public void draw(Graphics g) {
 		update();
 		
-		for(int i = 0; i < 10; i++){
+		for(int i = 0; i < 20; i++){
 			g.drawImage(land, where- (800*i), 0,
 					land.getWidth(), land.getHeight(), null);
 		}

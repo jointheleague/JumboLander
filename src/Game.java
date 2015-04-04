@@ -35,11 +35,11 @@ public class Game extends JFrame implements KeyListener {
 		plane = new Plane(length);
 		runway = new Runway(length);
 		scene = new Scene(length);
-		land = new Landscape(length);
+		land = new Landscape();
 		s = new Sound(allowSound);
 
-		s.playOnLoop(s.radioChatter);
-		s.playOnLoop(s.engine);
+		s.playOnLoop(Sound.radioChatter);
+		s.playOnLoop(Sound.engine);
 	}
 
 	public void paint(Graphics g) {
@@ -55,8 +55,8 @@ public class Game extends JFrame implements KeyListener {
 		}
 		g.clearRect(0, 0, this.getWidth(), this.getHeight());
 
-		if (rand.nextInt(fps) == 1)
-			s.play(s.bingBong);
+		if (rand.nextInt(fps*3) == 1)
+			s.play(Sound.bingBong);
 
 		land.draw(g);
 		runway.draw(g);
@@ -67,15 +67,15 @@ public class Game extends JFrame implements KeyListener {
 		if (plane.isOnRunway(runway) && isInControl) {
 			drawWin(g);
 			s.stopAmbient();
-			s.play(s.victory);
+			s.playOnLoop(Sound.victory);
 		} else if (plane.tooFar() && isInControl) {
 			drawGameOver(g, "You Missed the Runway!");
 			s.stopAmbient();
-			s.play(s.boo);
+			s.playOnLoop(Sound.boo);
 		} else if ((plane.isDead() || plane.collidedWith(scene) && isInControl)
 				|| !isInControl) {
 			if (isInControl) {
-				s.play(s.explosion);
+				s.play(Sound.explosion);
 				s.stopAmbient();
 			}
 			plane.drawExploded(g);
@@ -99,13 +99,28 @@ public class Game extends JFrame implements KeyListener {
 		g.setColor(Color.BLACK);
 		g.drawString("You Win!", this.getWidth() / 2, 100);
 	}
+	
+	public void reset() {
+		length = rand.nextInt(6 * 800) + 3 * 800;
+		plane.init(length);
+		runway.init(length);
+		scene.init(length);
+		land.init();
+		s.init();
+
+		s.playOnLoop(Sound.radioChatter);
+		s.playOnLoop(Sound.engine);
+		
+		isInControl = true;
+		repaint();
+	}
 
 	public void keyPressed(KeyEvent ke) {
 		if (ke.getKeyCode() == KeyEvent.VK_SPACE) {
 			if (isInControl)
 				plane.setThrottle(true);
-		} else if (ke.getKeyCode() == KeyEvent.VK_M) {
-			this.dispose();
+		} else if (ke.getKeyCode() == KeyEvent.VK_R) {
+			reset();
 		}
 	}
 

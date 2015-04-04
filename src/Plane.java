@@ -19,7 +19,13 @@ public class Plane {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+		init(distance);
+	}
+	
+	public void init(int distance) {
+		altitude = 0;
 		this.distance = distance;
+		throttle = false;
 	}
 
 	public boolean isDead() {

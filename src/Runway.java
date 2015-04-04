@@ -18,7 +18,10 @@ public class Runway {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-
+		init(distance);
+	}
+	
+	public void init(int distance) {
 		this.distance = distance;
 	}
 

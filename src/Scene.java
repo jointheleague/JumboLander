@@ -1,4 +1,3 @@
-
 import java.awt.Graphics;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
@@ -9,13 +8,11 @@ import javax.imageio.ImageIO;
 
 public class Scene {
 
-	private ArrayList<SceneObject> scene;
+	private ArrayList<SceneObject> scene = new ArrayList<SceneObject>();
 	Random rand = new Random();
-	BufferedImage bird, cloud, sun, tree;
+	BufferedImage bird, cloud, sun, tree = null;
 
 	public Scene(int length) {
-		scene = new ArrayList<SceneObject>();
-		bird = cloud = sun = tree = null;
 		try {
 			bird = ImageIO.read(getClass().getResourceAsStream("/bird.png"));
 			cloud = ImageIO.read(getClass().getResourceAsStream("/cloud.png"));
@@ -24,7 +21,11 @@ public class Scene {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+		init(length);
+	}
 
+	public void init(int length) {
+		scene.clear();
 		for (int i = 0; i < rand.nextInt(length / 500) + 10; i++) {
 			scene.add(new SceneObject(bird, rand.nextInt(length + 800) - 800,
 					rand.nextInt(400), true));

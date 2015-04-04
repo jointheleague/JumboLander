@@ -3,7 +3,7 @@ import javax.sound.sampled.Clip;
 
 public class Sound {
 
-	public Clip explosion, victory, engine, bingBong, radioChatter, boo;
+	public static Clip explosion, victory, engine, bingBong, radioChatter, boo;
 	private Clip[] ambient = { engine, bingBong, radioChatter };
 	private boolean allowAmbient = true;
 	private boolean allowSound = true;
@@ -36,25 +36,50 @@ public class Sound {
 		this.allowSound = allowSound;
 	}
 
+	public void init() {
+		stopAll();
+		allowAmbient = true;
+	}
+
 	public void playOnLoop(final Clip clip) {
 		if (allowSound)
-			if (!inArray(clip, ambient) || allowAmbient)
+			if (!inArray(clip, ambient) || allowAmbient) {
+				clip.setFramePosition(0);
 				clip.loop(Clip.LOOP_CONTINUOUSLY);
+			}
 	}
 
 	public void play(final Clip clip) {
 		if (allowSound)
-			if (!inArray(clip, ambient) || allowAmbient)
+			if (!inArray(clip, ambient) || allowAmbient) {
+				clip.setFramePosition(0);
 				clip.start();
+			}
 	}
 
 	public void stopAmbient() {
-		if (allowSound) {
-			allowAmbient = false;
+		allowAmbient = false;
+		if (engine.isActive())
 			engine.stop();
+		if (bingBong.isActive())
 			bingBong.stop();
+		if (radioChatter.isActive())
 			radioChatter.stop();
-		}
+	}
+
+	public void stopAll() {
+		if (engine.isActive())
+			engine.stop();
+		if (bingBong.isActive())
+			bingBong.stop();
+		if (radioChatter.isActive())
+			radioChatter.stop();
+		if (explosion.isActive())
+			explosion.stop();
+		if (victory.isActive())
+			victory.stop();
+		if (boo.isActive())
+			boo.stop();
 	}
 
 	private boolean inArray(Clip element, Clip[] clips) {

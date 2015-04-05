@@ -1,7 +1,10 @@
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.File;
+import java.io.IOException;
 
+import javax.imageio.ImageIO;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
@@ -25,6 +28,12 @@ public class JumboLanderMain extends JFrame implements ActionListener {
 		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		this.setVisible(true);
 		this.setResizable(true);
+		
+		try {
+	        this.setIconImage(ImageIO.read(new File("res/icon.png")));
+	    } catch (IOException e) {
+	        e.printStackTrace();
+	    }
 	}
 
 	public void init() {

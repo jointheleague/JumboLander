@@ -3,8 +3,11 @@ import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.io.File;
+import java.io.IOException;
 import java.util.Random;
 
+import javax.imageio.ImageIO;
 import javax.swing.JFrame;
 
 @SuppressWarnings("serial")
@@ -30,6 +33,12 @@ public class Game extends JFrame implements KeyListener {
 		this.addKeyListener(this);
 		this.setVisible(true);
 		this.setResizable(false);
+		
+		try {
+	        this.setIconImage(ImageIO.read(new File("res/icon.png")));
+	    } catch (IOException e) {
+	        e.printStackTrace();
+	    }
 
 		length = rand.nextInt(6 * 800) + 3 * 800;
 		plane = new Plane(length);

@@ -15,6 +15,7 @@ public class Landscape {
 		init();
 	}
 
+	@SuppressWarnings("deprecation")
 	public void init() {
 		hour = new Date().getHours();
 		try {

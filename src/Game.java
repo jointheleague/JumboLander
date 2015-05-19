@@ -22,7 +22,7 @@ public class Game extends JFrame implements KeyListener {
 	Sound s;
 
 	long timer = System.currentTimeMillis();
-	int length;
+	int length, paints = 1;
 	int fps = 40;
 	boolean isInControl = true;
 
@@ -33,12 +33,12 @@ public class Game extends JFrame implements KeyListener {
 		this.addKeyListener(this);
 		this.setVisible(true);
 		this.setResizable(false);
-		
+
 		try {
-	        this.setIconImage(ImageIO.read(new File("res/icon.png")));
-	    } catch (IOException e) {
-	        e.printStackTrace();
-	    }
+			this.setIconImage(ImageIO.read(new File("res/icon.png")));
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 
 		length = rand.nextInt(6 * 800) + 3 * 800;
 		plane = new Plane(length);
@@ -52,6 +52,11 @@ public class Game extends JFrame implements KeyListener {
 	}
 
 	public void paint(Graphics g) {
+		g.setFont(new Font(g.getFont().getFontName(), Font.PLAIN, 40));
+		g.setColor(Color.WHITE);
+		if (paints <= 4 && paints != 1) {
+			delay(g, paints);
+		}
 		try {
 			long sleep = timer + 1000 / fps - System.currentTimeMillis();
 			if (sleep > 0)
@@ -64,35 +69,73 @@ public class Game extends JFrame implements KeyListener {
 		}
 		g.clearRect(0, 0, this.getWidth(), this.getHeight());
 
-		if (rand.nextInt(fps*3) == 1)
+		if (rand.nextInt(fps * 3) == 1)
 			s.play(Sound.bingBong);
 
 		land.draw(g);
 		runway.draw(g);
 		plane.draw(g);
 		scene.draw(g);
-
+		if(paints == 1){
+			g.drawString("Coundown", this.getWidth()/2, 100);
+			try {
+				Thread.sleep(1000);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+		}
+		if(paints <= 4) g.drawString(String.valueOf(-paints+4), 400, 200);
+		if(-paints+4 == 3) System.out.println("THREE!!!");
+		
+		paints++;
 		timer = System.currentTimeMillis();
 		if (plane.isOnRunway(runway) && isInControl) {
+			
 			drawWin(g);
 			s.stopAmbient();
-			s.playOnLoop(Sound.victory);
+			s.play(Sound.victory);
+			try {
+				Thread.sleep(2000);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+			this.dispose();
+			
 		} else if (plane.tooFar() && isInControl) {
+			
 			drawGameOver(g, "You Missed the Runway!");
 			s.stopAmbient();
 			s.playOnLoop(Sound.boo);
+			try {
+				Thread.sleep(2000);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+			this.dispose();
+			
 		} else if ((plane.isDead() || plane.collidedWith(scene) && isInControl)
 				|| !isInControl) {
+
 			if (isInControl) {
 				s.play(Sound.explosion);
 				s.stopAmbient();
 			}
+
 			plane.drawExploded(g);
 			drawGameOver(g, "You Crashed!");
 			isInControl = false;
 			plane.setThrottle(false);
+
 			if (plane.getAltitude() <= 400)
 				repaint();
+			else {
+				try {
+					Thread.sleep(2000);
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				}
+				this.dispose();
+			}
 		} else
 			repaint();
 	}
@@ -108,7 +151,7 @@ public class Game extends JFrame implements KeyListener {
 		g.setColor(Color.BLACK);
 		g.drawString("You Win!", this.getWidth() / 2, 100);
 	}
-	
+
 	public void reset() {
 		length = rand.nextInt(6 * 800) + 3 * 800;
 		plane.init(length);
@@ -119,9 +162,20 @@ public class Game extends JFrame implements KeyListener {
 
 		s.playOnLoop(Sound.radioChatter);
 		s.playOnLoop(Sound.engine);
-		
+
 		isInControl = true;
 		repaint();
+	}
+	
+	public void delay(Graphics g, int paints){
+		g.setFont(new Font(g.getFont().getFontName(), Font.PLAIN, 40));
+		g.setColor(Color.WHITE);
+		try {
+			Thread.sleep(1000);
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
+		//g.drawString(String.valueOf(draw), 100, 100);
 	}
 
 	public void keyPressed(KeyEvent ke) {
